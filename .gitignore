@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Test artifacts (created by test_convert.py)
+_sample.docx
+_sample.hwpx
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# Personal documents — only the skeleton template is committed.
+*.docx
+*.hwpx
+!skeleton.hwpx
+
+# Claude Code personal settings (project-level shared settings stay)
+.claude/settings.local.json
