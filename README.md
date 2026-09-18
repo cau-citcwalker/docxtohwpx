@@ -2,6 +2,82 @@
 
 DOCX 파일을 한글(HWPX)로 변환하는 단일 파일 Python 컨버터입니다. 외부 의존성 없이 표준 라이브러리만 사용합니다.
 
+```mermaid
+flowchart TD
+
+subgraph group_g1["Command Layer"]
+  node_cli["CLI entrypoint<br/>[docx2hwpx.py]"]
+  node_orchestrator["Conversion orchestrator<br/>[docx2hwpx.py]"]
+end
+
+subgraph group_g2["DOCX Intake"]
+  node_docx_reader["DOCX reader<br/>[docx2hwpx.py]"]
+  node_metadata_loaders["Styles and numbering<br/>[docx2hwpx.py]"]
+  node_rich_content["Rich content parsing<br/>[docx2hwpx.py]"]
+  node_media_relations["Media and relations<br/>[docx2hwpx.py]"]
+end
+
+subgraph group_g3["Conversion Core"]
+  node_document_ir["Document IR<br/>[docx2hwpx.py]"]
+  node_property_interner["Property interning<br/>[docx2hwpx.py]"]
+end
+
+subgraph group_g4["HWPX Output"]
+  node_hwpx_writer["HWPX writer<br/>[docx2hwpx.py]"]
+  node_skeleton_template["HWPX skeleton<br/>[skeleton.hwpx]"]
+  node_header_patcher["Header patcher<br/>[docx2hwpx.py]"]
+  node_section_builder["Section builder<br/>[docx2hwpx.py]"]
+  node_package_writer["Package assembler<br/>[docx2hwpx.py]"]
+  node_hwpx_output["HWPX output"]
+end
+
+node_user(("User"))
+
+node_user -->|"runs"| node_cli
+node_cli -->|"calls"| node_orchestrator
+node_orchestrator -->|"parses"| node_docx_reader
+node_docx_reader -->|"loads"| node_metadata_loaders
+node_docx_reader -->|"parses"| node_rich_content
+node_docx_reader -->|"resolves"| node_media_relations
+node_metadata_loaders -->|"populates"| node_document_ir
+node_rich_content -->|"populates"| node_document_ir
+node_media_relations -->|"adds assets"| node_document_ir
+node_orchestrator -->|"interns properties"| node_property_interner
+node_property_interner -->|"reads"| node_document_ir
+node_orchestrator -->|"writes"| node_hwpx_writer
+node_hwpx_writer -->|"reads template"| node_skeleton_template
+node_hwpx_writer -->|"patches header"| node_header_patcher
+node_hwpx_writer -->|"builds section"| node_section_builder
+node_hwpx_writer -->|"assembles package"| node_package_writer
+node_package_writer -->|"writes"| node_hwpx_output
+
+click node_cli "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_orchestrator "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_docx_reader "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_metadata_loaders "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_rich_content "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_media_relations "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_document_ir "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_property_interner "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_hwpx_writer "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_skeleton_template "https://github.com/cau-citcwalker/docxtohwpx/blob/main/skeleton.hwpx"
+click node_header_patcher "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_section_builder "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+click node_package_writer "https://github.com/cau-citcwalker/docxtohwpx/blob/main/docx2hwpx.py"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_cli,node_orchestrator,node_user toneBlue
+class node_docx_reader,node_metadata_loaders,node_rich_content,node_media_relations toneAmber
+class node_document_ir,node_property_interner toneMint
+class node_hwpx_writer,node_skeleton_template,node_header_patcher,node_section_builder,node_package_writer,node_hwpx_output toneRose
+```
+
 ## 빠른 시작
 
 ```bash
